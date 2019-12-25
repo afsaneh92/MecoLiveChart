@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+ <style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+    .symbol {
+    width:20px;
+    height:20px;
+    margin-right:20px;
+    float:left;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+.serieName {
+    float:left;
+    cursor:pointer;
+}
+
+.item {
+    height:40px;
+    clear:both;
+}
+</style>
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flask Highcharts Live Data Demo</title>
+
+          <!-- Bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="{{ url_for('static', filename='html5shiv.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='respond.min.js') }}" ></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Flask-Live-Chart</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+{#        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">#}
+{#          <ul class="nav navbar-nav">#}
+{#            <li><a href="#">A link</a></li>#}
+{#          </ul>#}
+{#        </div><!-- /.navbar-collapse -->#}
+      </div>
+    </div>
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container-fluid">
+        <br/>
+        <p>Live data plotting using Flask and Highcharts.</p>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <!-- Example row of columns -->
+      <div class="row">
+
+          <div class="container-fluid" id="data-container"></div>
+
+        </div>
+    </div>
+    <hr>
+
+
+    </div> <!-- /container -->
+    <script src="{{ url_for('static', filename='jquery-3.4.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-1.8.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='loader.js') }}"></script>
+    <script src="{{ url_for('static', filename='plotly-latest.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='highstock.js') }}"></script>
+    <script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+    <script src="{{ url_for('static', filename='exporting.js') }}"></script>
+
+    <script src="/static/js/highcharts.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}" ></script>
+
+<script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+			{% for key, value in data.items() %}
+				{% if value is string %}
+					['{{ key }}', '{{ value }}'],
+				{% else %}
+					['{{ key }}', {{ value }}],
+				{% endif %}
+			{% endfor %}
+        ]);
+
+        var options = {
+          title: 'Memory State',
+          is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+    </script>
+<div class="row">
+  <div class="column">
+    <div style="margin: 10px 0 0 10px;width: 1000px">
+			<div id="piechart_3d" style="width: 700px; height: 700px;"></div>
+	</div>
+
+  </div>
+  <div class="column" >
+	<div class="chart" id="bargraph" style="width: 600px; height: 600px;">
+		<script>
+				var graphs = {{plot | safe}};
+				Plotly.plot('bargraph',graphs,{});
+		</script>
+	   </div>
+  </div>
+</div>
+  </body>
+</html>
