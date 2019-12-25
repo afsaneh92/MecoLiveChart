@@ -1,13 +1,26 @@
 import json
+import sqlite3
 from time import time
-from random import random
-
 import psutil
 from flask import Flask, render_template, make_response
-
 from bar_graph import create_plot
 
 app = Flask(__name__)
+
+
+@app.route("/data.json")
+def data():
+    connection = sqlite3.connect("db.sqlite")
+    cursor = connection.cursor()
+    cursor.execute("SELECT 1000*timestamp, measure from measures")
+    results = cursor.fetchall()
+    print(results)
+    return json.dumps(results)
+
+
+@app.route("/graph")
+def graph():
+    return render_template('graph.html')
 
 
 @app.route('/')
